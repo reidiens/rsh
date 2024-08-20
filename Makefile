@@ -10,3 +10,4 @@ ${BIN} : ${SOURCE_DIR}
 
 	rm ${SOURCE_DIR}*.gch
 	rm *.o
+	mv tsh /usr/bin

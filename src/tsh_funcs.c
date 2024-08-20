@@ -33,6 +33,12 @@ uint8_t run(char **args) {
 }
 
 uint8_t change_dir(char **args) {
+    if (args[1] == NULL) {
+        if (chdir(homedir) == -1) {
+            perror("cd");
+            return EXIT_RECOVERABLE;
+        } 
+    }
     if (chdir(args[1]) == -1) {
         if (errno == ENOENT) printf("cd: No such file or directory\n");
         else perror("cd");
