@@ -1,7 +1,7 @@
 CC = gcc
 SOURCE_DIR = src/
 FLAGS = -Wall -O2
-BIN = tsh
+BIN = rsh
 MAIN = main.c
 
 ${BIN} : ${SOURCE_DIR}
@@ -10,4 +10,4 @@ ${BIN} : ${SOURCE_DIR}
 
 	rm ${SOURCE_DIR}*.gch
 	rm *.o
-	mv tsh /usr/bin
+	mv rsh /usr/bin
