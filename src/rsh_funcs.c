@@ -1,5 +1,4 @@
-#include "tsh_core.h"
-#include "tsh_funcs.h"
+#include "rsh_funcs.h"
 
 uint8_t run(char **args) {
     pid_t pid = fork(), wpid;
@@ -8,22 +7,22 @@ uint8_t run(char **args) {
     if (pid == 0) {
         if (execvp(args[0], args)) {
             if (errno == ENOENT) {
-                printf("\033[31m tsh:\033[0m Command not found: %s\n", args[0]);
+                printf("\033[31m rsh:\033[0m Command not found: %s\n", args[0]);
                 return EXIT_RECOVERABLE;
             }
-            perror("\033[31mtsh:\033[0m Error running command");
+            perror("\033[31mrsh:\033[0m Error running command");
             return EXIT_UNRECOVERABLE;
         }
     }
     else if (pid < 0) {
-        perror("\033[31mtsh:\033[0m Couldn't fork process");
+        perror("\033[31mrsh:\033[0m Couldn't fork process");
         return EXIT_UNRECOVERABLE;
     }
     else {
         do {
             wpid = waitpid(pid, &stat, WUNTRACED);
             if (wpid < 0) {
-                perror("\033[31mtsh:\033[0m Error waiting for process");
+                perror("\033[31mrsh:\033[0m Error waiting for process");
                 return EXIT_UNRECOVERABLE;
             }
         } while (!WIFEXITED(stat) && !WIFSIGNALED(stat));

@@ -1,4 +1,5 @@
-#include "tsh_bufs.h"
+#include "rsh_bufs.h"
+#include "shared.h"
 
 uint8_t init_io_bufs() {
     inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
@@ -37,7 +38,7 @@ uint8_t flush_io_bufs() {
     if (inbuf->max >= INPUT_BUFSIZE * 4) {
         inbuf->buf = realloc(inbuf->buf, INPUT_BUFSIZE * sizeof(char));
         if (!inbuf->buf) {
-            inbuf = alloc_tsh_buf(INPUT_BUFSIZE);
+            inbuf = alloc_rsh_buf(INPUT_BUFSIZE);
             if (!inbuf)
                 return EXIT_UNRECOVERABLE;
             return EXIT_RECOVERABLE;
@@ -48,7 +49,7 @@ uint8_t flush_io_bufs() {
     if (outbuf->max >= OUTPUT_BUFSIZE * 2) {
         outbuf->buf = realloc(outbuf->buf, OUTPUT_BUFSIZE * sizeof(char));
         if (!outbuf->buf) {
-            outbuf = alloc_tsh_buf(OUTPUT_BUFSIZE);
+            outbuf = alloc_rsh_buf(OUTPUT_BUFSIZE);
             if (!outbuf)
                 return EXIT_UNRECOVERABLE;
             return EXIT_RECOVERABLE;
@@ -59,8 +60,8 @@ uint8_t flush_io_bufs() {
     return EXIT_SUCCESS;
 }
 
-tsh_buf_t* alloc_tsh_buf(size_t bufsize) {
-    tsh_buf_t *buffer = {};
+rsh_buf_t* alloc_rsh_buf(size_t bufsize) {
+    rsh_buf_t *buffer = {};
     
     buffer->buf = malloc(bufsize * sizeof(char));
     if (!buffer->buf) return NULL;
@@ -74,12 +75,12 @@ tsh_buf_t* alloc_tsh_buf(size_t bufsize) {
     return buffer;
 }
 
-void free_tsh_buf(tsh_buf_t *buffer) {
+void free_rsh_buf(rsh_buf_t *buffer) {
     free(buffer->buf);
     memset(buffer, 0, sizeof(*buffer));
 }
 
-void flush_tsh_buf(tsh_buf_t *buffer) {
+void flush_rsh_buf(rsh_buf_t *buffer) {
     memset(buffer->buf, 0, buffer->max);
     buffer->size = 0;
 }

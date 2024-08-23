@@ -6,7 +6,8 @@ MAIN = main.c
 
 ${BIN} : ${SOURCE_DIR}
 	${CC} -c ${SOURCE_DIR}*
-	${CC} ${MAIN} *.o -o ${BIN}
+	${CC} -c ${MAIN} *.o
+	${CC} *.o -o ${BIN}
 
 	rm ${SOURCE_DIR}*.gch
 	rm *.o

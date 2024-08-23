@@ -1,4 +1,4 @@
-#include "tsh_core.h"
+#include "rsh_core.h"
 
 #define TOK_DELIM " \t\n\r\a"
 
@@ -13,31 +13,31 @@ char* getArgvVal(char **argv, char *arg_name) {
     return NULL;
 }
 
-void tsh_err(const char *str) {
-    fprintf(stderr, "\033[31mtsh: \033[0m%s\n", str);
+void rsh_err(const char *str) {
+    fprintf(stderr, "\033[31mrsh: \033[0m%s\n", str);
 }
 
-uint8_t tsh_init(int argc, char *argv[]) {
+uint8_t rsh_init(int argc, char *argv[]) {
     if (init_io_bufs() != EXIT_SUCCESS) {
-        tsh_err("Couldn't initialize I/O buffers");
+        rsh_err("Couldn't initialize I/O buffers");
         exit(1);
     }
 
     homedir = getArgvVal(argv, "HOME");
     if (!homedir) {
-        tsh_err("Couldn't get home directory");
+        rsh_err("Couldn't get home directory");
         free_io_bufs();
         exit(2);
     }
 
     char *historyfile = homedir;
-    char *name = "/.tsh_history";    
+    char *name = "/.rsh_history";    
 
     strncat(historyfile, name, strlen(name));
     
     historyfd = fopen(historyfile, "a");
     if (historyfd == NULL) {
-        tsh_err("Couldn't open history file");
+        rsh_err("Couldn't open history file");
         free_io_bufs();
         exit(errno);
     }
@@ -45,7 +45,7 @@ uint8_t tsh_init(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-void tsh_cleanup() {
+void rsh_cleanup() {
     free_io_bufs();
     fclose(historyfd);
 }
@@ -59,8 +59,8 @@ uint8_t get_input() {
             inbuf->buf = realloc(inbuf->buf, inbuf->max * sizeof(char));
 
             if (inbuf->buf == NULL) {
-                tsh_err("Error allocating command buffer memory");
-                tsh_cleanup();
+                rsh_err("Error allocating command buffer memory");
+                rsh_cleanup();
                 exit(errno);
             }
         }
@@ -81,8 +81,8 @@ char** parse_input_buf(size_t *argSize) {
     char **args = malloc(*argSize * sizeof(char *));
 
     if (args == NULL) {
-        tsh_err("Error allocating memory for command token array");
-        tsh_cleanup();
+        rsh_err("Error allocating memory for command token array");
+        rsh_cleanup();
         free(args);
         exit(errno);
     }
@@ -98,9 +98,9 @@ char** parse_input_buf(size_t *argSize) {
             args = realloc(args,*argSize * sizeof(char *));
 
             if (args == NULL) {
-                tsh_err("Error allocating memory for command token array");
+                rsh_err("Error allocating memory for command token array");
                 free(args);
-                tsh_cleanup();
+                rsh_cleanup();
                 exit(errno);
             }
         }
@@ -115,7 +115,7 @@ char** parse_input_buf(size_t *argSize) {
     return args;
 }
 
-void tsh_loop(void) {
+void rsh_loop(void) {
     size_t argSize = ARG_BUFSIZE;
     char **args;
 
@@ -130,7 +130,7 @@ void tsh_loop(void) {
         fprintf(historyfd, "%s\n", inbuf->buf);
 
         if (strcmp(inbuf->buf, "exit") == 0) {
-            tsh_cleanup();
+            rsh_cleanup();
             exit(EXIT_SUCCESS); 
         }
 
@@ -146,7 +146,7 @@ void tsh_loop(void) {
 
         if (run(args) != EXIT_SUCCESS) {
             free(args);
-            tsh_cleanup();
+            rsh_cleanup();
             exit(errno);
         } 
 

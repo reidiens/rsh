@@ -7,15 +7,14 @@
 #define EXIT_RECOVERABLE    1
 #define EXIT_UNRECOVERABLE  2
 
-typedef struct Tsh_Buffer {
+typedef struct rsh_Buffer {
     char *buf;
     size_t max;
     size_t size;
-} tsh_buf_t;
-
-extern tsh_buf_t *inbuf;
-extern tsh_buf_t *outbuf;
+} rsh_buf_t;
 
 extern FILE *historyfd;
+extern rsh_buf_t *inbuf;
+extern rsh_buf_t *outbuf;
 
 #endif

@@ -1,5 +1,7 @@
-#ifndef __TSH_FUNCS_H__
-    #define __TSH_FUNCS_H__ 1
+#ifndef __RSH_FUNCS_H__
+    #define __RSH_FUNCS_H__ 1
+
+#include "shared.h"
 
 #include <stdio.h>
 #include <unistd.h>

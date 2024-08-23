@@ -1,8 +1,8 @@
-#include "src/tsh_core.h"
+#include "src/rsh_core.h"
 
 int main(int argc, char *argv[]) {
-    tsh_init(argc, argv);
-    tsh_loop();
+    rsh_init(argc, argv);
+    rsh_loop();
 
     return 0;
 }
