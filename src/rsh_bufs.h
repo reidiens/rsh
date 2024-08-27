@@ -1,7 +1,7 @@
 #ifndef __RSH_BUFS_H__
     #define __RSH_BUFS_H__ 1
 
-#include "shared.h"
+#include "rsh_core.h"
 
 #include <stdio.h>
 #include <stdint.h>

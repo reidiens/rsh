@@ -1,60 +1,66 @@
 #include "rsh_bufs.h"
-#include "shared.h"
+
+#include "rsh_core.h"
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 uint8_t init_io_bufs() {
-    inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
-    if (!inbuf->buf) return EXIT_UNRECOVERABLE;
+    rsh_inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
+    if (!rsh_inbuf->buf) return EXIT_UNRECOVERABLE;
 
-    inbuf->max = INPUT_BUFSIZE;
+    rsh_inbuf->max = INPUT_BUFSIZE;
 
-    outbuf->buf = malloc(OUTPUT_BUFSIZE * sizeof(char));
-    if (!outbuf->buf) return EXIT_UNRECOVERABLE;
+    rsh_outbuf->buf = malloc(OUTPUT_BUFSIZE * sizeof(char));
+    if (!rsh_outbuf->buf) return EXIT_UNRECOVERABLE;
 
-    outbuf->max = OUTPUT_BUFSIZE;
+    rsh_outbuf->max = OUTPUT_BUFSIZE;
 
-    memset(inbuf->buf, 0, INPUT_BUFSIZE);
-    memset(outbuf->buf, 0, OUTPUT_BUFSIZE);
+    memset(rsh_inbuf->buf, 0, INPUT_BUFSIZE);
+    memset(rsh_outbuf->buf, 0, OUTPUT_BUFSIZE);
 
-    inbuf->size = 0;
-    outbuf->size = 0;
+    rsh_inbuf->size = 0;
+    rsh_outbuf->size = 0;
 
     return EXIT_SUCCESS;
 }
 
 void free_io_bufs() {
-    free(inbuf->buf);
-    free(outbuf->buf);
-    memset(inbuf, 0, sizeof(*inbuf));
-    memset(outbuf, 0, sizeof(*outbuf));
+    free(rsh_inbuf->buf);
+    free(rsh_outbuf->buf);
+    memset(rsh_inbuf, 0, sizeof(*rsh_inbuf));
+    memset(rsh_outbuf, 0, sizeof(*rsh_outbuf));
 }
 
 uint8_t flush_io_bufs() {
-    memset(inbuf->buf, 0, inbuf->max);
-    memset(outbuf->buf, 0, outbuf->max);
+    memset(rsh_inbuf->buf, 0, rsh_inbuf->max);
+    memset(rsh_outbuf->buf, 0, rsh_outbuf->max);
 
-    inbuf->size = 0;
-    outbuf->size = 0;
+    rsh_inbuf->size = 0;
+    rsh_outbuf->size = 0;
 
-    if (inbuf->max >= INPUT_BUFSIZE * 4) {
-        inbuf->buf = realloc(inbuf->buf, INPUT_BUFSIZE * sizeof(char));
-        if (!inbuf->buf) {
-            inbuf = alloc_rsh_buf(INPUT_BUFSIZE);
-            if (!inbuf)
+    if (rsh_inbuf->max >= INPUT_BUFSIZE * 4) {
+        rsh_inbuf->buf = realloc(rsh_inbuf->buf, INPUT_BUFSIZE * sizeof(char));
+        if (!rsh_inbuf->buf) {
+            rsh_inbuf = alloc_rsh_buf(INPUT_BUFSIZE);
+            if (!rsh_inbuf)
                 return EXIT_UNRECOVERABLE;
             return EXIT_RECOVERABLE;
         }
-        inbuf->max = INPUT_BUFSIZE;
+        rsh_inbuf->max = INPUT_BUFSIZE;
     }
 
-    if (outbuf->max >= OUTPUT_BUFSIZE * 2) {
-        outbuf->buf = realloc(outbuf->buf, OUTPUT_BUFSIZE * sizeof(char));
-        if (!outbuf->buf) {
-            outbuf = alloc_rsh_buf(OUTPUT_BUFSIZE);
-            if (!outbuf)
+    if (rsh_outbuf->max >= OUTPUT_BUFSIZE * 2) {
+        rsh_outbuf->buf = realloc(rsh_outbuf->buf, OUTPUT_BUFSIZE * sizeof(char));
+        if (!rsh_outbuf->buf) {
+            rsh_outbuf = alloc_rsh_buf(OUTPUT_BUFSIZE);
+            if (!rsh_outbuf)
                 return EXIT_UNRECOVERABLE;
             return EXIT_RECOVERABLE;
         }
-        outbuf->max = OUTPUT_BUFSIZE;
+        rsh_outbuf->max = OUTPUT_BUFSIZE;
     }
 
     return EXIT_SUCCESS;

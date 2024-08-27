@@ -1,6 +1,6 @@
 #include "rsh_funcs.h"
 
-uint8_t run(char **args) {
+uint8_t rsh_exec_command(char **args) {
     pid_t pid = fork(), wpid;
     int stat;
 
@@ -31,7 +31,7 @@ uint8_t run(char **args) {
     return EXIT_SUCCESS;
 }
 
-uint8_t change_dir(char **args) {
+uint8_t rsh_cd(char **args) {
     if (args[1] == NULL) {
         if (chdir(homedir) == -1) {
             perror("cd");

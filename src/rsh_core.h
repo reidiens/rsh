@@ -1,23 +1,29 @@
-#ifndef __RSH_CORE__ 
-    #define __RSH_CORE__ 1
+#ifndef __RSH_CORE_H__ 
+    #define __RSH_CORE_H__ 1
 
-#include "shared.h"
-#include "rsh_bufs.h"
-#include "rsh_funcs.h"
+#define EXIT_SUCCESS        0
+#define EXIT_RECOVERABLE    1
+#define EXIT_UNRECOVERABLE  2
 
-#include <stdint.h>
+#define HOSTNAME_MAX_LEN    255
+#define USERNAME_MAX_LEN     32
+#define HOMEDIR_MAX_LEN     255
+
 #include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <pwd.h>
-#include <string.h>
-#include <stdlib.h>
 
-#define ARG_BUFSIZE         32
+typedef struct Rsh_Buffer {
+    char *buf;
+    size_t max;
+    size_t size;
+} rsh_buf_t;
+
+extern FILE *rsh_history_fd;
+extern rsh_buf_t *rsh_inbuf;
+extern rsh_buf_t *rsh_outbuf;
+extern char *hostname;
+extern char *username;
+extern char *homedir;
 
 void rsh_err(const char *str);
-uint8_t rsh_init(int argc, char *argv[]);
-void rsh_cleanup();
-void rsh_loop(void);
 
 #endif
