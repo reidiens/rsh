@@ -3,6 +3,7 @@
 #include "rsh_funcs.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdint.h>
@@ -46,6 +47,19 @@ uint8_t rsh_cd(char **args) {
             return EXIT_RECOVERABLE;
         } 
     }
+
+    else if (strcmp(args[1], ".") == 0) {
+        fprintf(stderr, "cd: You're already here!");
+        return EXIT_SUCCESS;
+    }
+
+    else if (strcmp(args[1], "~") == 0) {
+        if (chdir(homedir) == -1) {
+            perror("cd");
+            return EXIT_RECOVERABLE;
+        }
+    }
+
     if (chdir(args[1]) == -1) {
         if (errno == ENOENT) printf("cd: No such file or directory\n");
         else perror("cd");

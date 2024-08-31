@@ -8,6 +8,19 @@
 #include <string.h>
 
 uint8_t init_io_bufs() {
+    rsh_inbuf = (rsh_buf_t *)malloc(sizeof(rsh_buf_t));
+    if (!rsh_inbuf) {
+        rsh_err("Couldn't allocate input buffer structure memory");
+        exit(1);
+    }
+
+    rsh_outbuf = (rsh_buf_t *)malloc(sizeof(rsh_buf_t));
+    if (!rsh_outbuf) {
+        rsh_err("Couldn't allocate output buffer structure memory");
+        free_rsh_buf(rsh_inbuf);
+        exit(1);
+    }
+
     rsh_inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
     if (!rsh_inbuf->buf) return EXIT_UNRECOVERABLE;
 
@@ -30,8 +43,8 @@ uint8_t init_io_bufs() {
 void free_io_bufs() {
     free(rsh_inbuf->buf);
     free(rsh_outbuf->buf);
-    memset(rsh_inbuf, 0, sizeof(*rsh_inbuf));
-    memset(rsh_outbuf, 0, sizeof(*rsh_outbuf));
+    free(rsh_inbuf);
+    free(rsh_outbuf);
 }
 
 uint8_t flush_io_bufs() {

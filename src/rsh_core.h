@@ -14,6 +14,7 @@
 #define HOMEDIR_MAX_LEN     255
 
 #include <stdio.h>
+#include <errno.h>
 
 typedef struct Rsh_Buffer {
     char *buf;
@@ -22,6 +23,7 @@ typedef struct Rsh_Buffer {
 } rsh_buf_t;
 
 extern FILE *rsh_history_fd;
+extern FILE *rsh_rc_fd;
 extern rsh_buf_t *rsh_inbuf;
 extern rsh_buf_t *rsh_outbuf;
 extern char *hostname;

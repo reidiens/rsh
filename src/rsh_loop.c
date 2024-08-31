@@ -88,6 +88,9 @@ void rsh_loop(void) {
 
     while (1) {
         rsh_prompt();
+
+        if (rsh_readline() != EXIT_SUCCESS) exit(errno);
+
         fprintf(rsh_history_fd, "%s\n", rsh_inbuf->buf);
 
         if (strcmp(rsh_inbuf->buf, "exit") == 0) {
