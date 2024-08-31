@@ -1,4 +1,12 @@
+#include "rsh_core.h"
+
 #include "rsh_funcs.h"
+
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdint.h>
+#include <sys/wait.h>
 
 uint8_t rsh_exec_command(char **args) {
     pid_t pid = fork(), wpid;

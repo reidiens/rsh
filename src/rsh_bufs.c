@@ -1,6 +1,6 @@
-#include "rsh_bufs.h"
-
 #include "rsh_core.h"
+
+#include "rsh_bufs.h"
 
 #include <stdio.h>
 #include <stdint.h>

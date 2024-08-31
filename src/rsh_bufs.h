@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT_BUFSIZE   2048
+#define INPUT_BUFSIZE   2048 
 #define OUTPUT_BUFSIZE  4096  
 
 uint8_t init_io_bufs();

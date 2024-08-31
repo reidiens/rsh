@@ -1,7 +1,7 @@
-#include "rsh_loop.h"
-
-#include "rsh_bufs.h"
 #include "rsh_core.h"
+
+#include "rsh_loop.h"
+#include "rsh_bufs.h"
 #include "rsh_funcs.h"
 #include "rsh_init.h"
 

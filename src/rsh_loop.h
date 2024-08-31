@@ -1,7 +1,7 @@
 #ifndef __RSH_LOOP_H__
     #define __RSH_LOOP_H__
 
-#include "rsh_core.h"
+#include "rsh_core.h" // always include first
 #include "rsh_init.h"
 #include "rsh_bufs.h"
 #include "rsh_funcs.h"

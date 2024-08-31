@@ -1,7 +1,7 @@
 #ifndef __RSH_INIT_H__
     #define __RSH_INIT_H__ 1
 
-#include "rsh_core.c"
+#include "rsh_core.h" // always include first
 #include "rsh_bufs.h"
 
 #include <errno.h>

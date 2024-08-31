@@ -1,3 +1,5 @@
+#include "rsh_core.h"
+
 #include "rsh_init.h"
 #include "rsh_bufs.h"
 
@@ -6,9 +8,12 @@
 #include <errno.h>
 
 char* getArgVal(char *argv[], char *str) {
+    char *string = str;
+    uint8_t found = 0;
+
     for (char **a_p = argv + 2; *a_p; a_p++) {
         for (char *p = *a_p, *string = str; *p && *p == *string; p++, string++) {
-            if (*p == '=') return ++p;
+            if (*(p + 1) == '=') return p + 2;               
         }
     }
     return NULL;
@@ -22,10 +27,29 @@ void rsh_cleanup() {
     free(homedir);
 }
 
-uint8_t rsh_init(int argc, char *argv[]) {
+uint8_t init_user_info_bufs() {
     username = malloc(USERNAME_MAX_LEN * sizeof(char));
-    if (!username) {
-        rsh_err("Couldn't allocate memory for username");
+    if (!username) return EXIT_UNRECOVERABLE;
+
+    hostname = malloc(HOSTNAME_MAX_LEN * sizeof(char));
+    if (!hostname) {
+        free(username);
+        return EXIT_UNRECOVERABLE;
+    }
+
+    homedir = malloc(HOMEDIR_MAX_LEN * sizeof(char));
+    if (!homedir) {
+        free(hostname);
+        free(username);
+        return EXIT_UNRECOVERABLE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+uint8_t rsh_init(int argc, char *argv[]) {
+    if (init_user_info_bufs() != EXIT_SUCCESS) {
+        rsh_err("Couldn't allocate memory for user info");
         exit(1);
     }
 

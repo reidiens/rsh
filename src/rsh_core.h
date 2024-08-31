@@ -1,3 +1,7 @@
+/*
+    -- Include First --
+*/
+
 #ifndef __RSH_CORE_H__ 
     #define __RSH_CORE_H__ 1
 

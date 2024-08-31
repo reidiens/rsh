@@ -5,9 +5,9 @@ BIN = rsh
 MAIN = main.c
 
 ${BIN} : ${SOURCE_DIR}
-	${CC} -c ${SOURCE_DIR}*
-	${CC} ${MAIN} *.o -o ${BIN}
+	${CC} -c -g ${SOURCE_DIR}*
+	${CC} -g ${MAIN} *.o
 
 	rm ${SOURCE_DIR}*.gch
 	rm *.o
-	mv rsh /usr/bin
+#	mv rsh /usr/bin
