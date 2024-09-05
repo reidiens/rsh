@@ -41,23 +41,19 @@ uint8_t rsh_exec_command(char **args) {
 }
 
 uint8_t rsh_cd(char **args) {
-    if (args[1] == NULL) {
+    if (args[1] == NULL || 
+        strcmp(args[1], " ") == 0 || strcmp(args[1], "~") == 0)
+    {
         if (chdir(homedir) == -1) {
             perror("cd");
             return EXIT_RECOVERABLE;
-        } 
+        }
+        else return EXIT_SUCCESS; 
     }
 
     else if (strcmp(args[1], ".") == 0) {
         fprintf(stderr, "cd: You're already here!");
         return EXIT_SUCCESS;
-    }
-
-    else if (strcmp(args[1], "~") == 0) {
-        if (chdir(homedir) == -1) {
-            perror("cd");
-            return EXIT_RECOVERABLE;
-        }
     }
 
     if (chdir(args[1]) == -1) {
