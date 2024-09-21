@@ -1,4 +1,3 @@
-#include "src/rsh_core.h"
 #include "src/rsh_init.h"
 #include "src/rsh_loop.h"
 

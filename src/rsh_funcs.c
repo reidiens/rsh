@@ -52,7 +52,7 @@ uint8_t rsh_cd(char **args) {
     }
 
     else if (strcmp(args[1], ".") == 0) {
-        fprintf(stderr, "cd: You're already here!");
+        fprintf(stderr, "cd: You're already here!\n");
         return EXIT_SUCCESS;
     }
 

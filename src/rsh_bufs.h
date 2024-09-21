@@ -13,7 +13,8 @@
 
 uint8_t init_io_bufs();
 void free_io_bufs();
-uint8_t flush_io_bufs();
+void flush_io_bufs();
+void reset_io_bufs();
 
 rsh_buf_t* alloc_rsh_buf(size_t bufsize);
 void free_rsh_buf(rsh_buf_t *buffer);

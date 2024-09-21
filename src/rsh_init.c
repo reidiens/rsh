@@ -9,18 +9,6 @@
 
 uint8_t hostname_alloc_fail = 0;
 
-char* getArgVal(char *argv[], char *str) {
-    char *string = str;
-    uint8_t found = 0;
-
-    for (char **a_p = argv + 2; *a_p; a_p++) {
-        for (char *p = *a_p, *string = str; *p && *p == *string; p++, string++) {
-            if (*(p + 1) == '=') return p + 2;               
-        }
-    }
-    return NULL;
-}
-
 uint8_t rsh_open_hist_file() {
     char *hist_name = "/.rsh_history";
     char *hist_file_path = malloc((strlen(homedir) * strlen(hist_name)) * sizeof(char));
@@ -58,6 +46,12 @@ uint8_t rsh_open_rc_file() {
 }
 
 uint8_t rsh_init(int argc, char *argv[]) {
+    PATH = getArgvValue(argv, "PATH");
+    if (!PATH) {
+        rsh_err("Couldn't find PATH!");
+        exit(1);
+    }    
+
     hostname = malloc(HOSTNAME_MAX_LEN * sizeof(char));
     if (!hostname) {
         hostname_alloc_fail = 1; 
@@ -65,7 +59,7 @@ uint8_t rsh_init(int argc, char *argv[]) {
         hostname = "host";
     }
 
-    username = getArgVal(argv, "LOGNAME");
+    username = getArgvValue(argv, "LOGNAME");
     if (!username) {
         rsh_err("Couldn't get username. Using default: 'user'");
         strcpy(username, "user");
@@ -76,7 +70,7 @@ uint8_t rsh_init(int argc, char *argv[]) {
         strcpy(hostname, "machine");
     }
 
-    homedir = getArgVal(argv, "HOME");
+    homedir = getArgvValue(argv, "HOME");
     if (!homedir) {
         rsh_err("Couldn't find home directory");
         free(hostname);

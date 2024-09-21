@@ -24,12 +24,13 @@ typedef struct Rsh_Buffer {
 
 extern FILE *rsh_history_fd;
 extern FILE *rsh_rc_fd;
-extern rsh_buf_t *rsh_inbuf;
-extern rsh_buf_t *rsh_outbuf;
+extern rsh_buf_t *rsh_inbuf, *rsh_outbuf, *rsh_errbuf;
 extern char *hostname;
 extern char *username;
 extern char *homedir;
+extern char *PATH;
 
 void rsh_err(const char *str);
+char* getArgvValue(char *argv[], char *str);
 
 #endif

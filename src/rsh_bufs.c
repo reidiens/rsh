@@ -2,6 +2,7 @@
 
 #include "rsh_bufs.h"
 
+#include <alloca.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -21,62 +22,66 @@ uint8_t init_io_bufs() {
         exit(1);
     }
 
-    rsh_inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
-    if (!rsh_inbuf->buf) return EXIT_UNRECOVERABLE;
+    rsh_errbuf = (rsh_buf_t *)malloc(sizeof(rsh_buf_t));
+    if (!rsh_errbuf) {
+        rsh_err("Couldn't allocate error buffer structure memory");
+        free_rsh_buf(rsh_inbuf);
+        free_rsh_buf(rsh_outbuf);
+        exit(1);
+    }
 
+    rsh_inbuf->buf = malloc(INPUT_BUFSIZE * sizeof(char));
+    if (!rsh_inbuf->buf) {
+        rsh_err("Couldn't allocate input buffer memory");
+        free_io_bufs();
+        exit(1);
+    }
     rsh_inbuf->max = INPUT_BUFSIZE;
 
     rsh_outbuf->buf = malloc(OUTPUT_BUFSIZE * sizeof(char));
-    if (!rsh_outbuf->buf) return EXIT_UNRECOVERABLE;
-
+    if (!rsh_inbuf->buf) {
+        rsh_err("Couldn't allocate output buffer memory");
+        free_io_bufs();
+        exit(1);
+    }
     rsh_outbuf->max = OUTPUT_BUFSIZE;
+    
+    rsh_errbuf->buf = malloc(OUTPUT_BUFSIZE * sizeof(char));
+    if (!rsh_inbuf->buf) {
+        rsh_err("Couldn't allocate error buffer memory");
+        free_io_bufs();
+        exit(1);
+    }
+    rsh_errbuf->max = OUTPUT_BUFSIZE;
 
-    memset(rsh_inbuf->buf, 0, INPUT_BUFSIZE);
-    memset(rsh_outbuf->buf, 0, OUTPUT_BUFSIZE);
+    flush_io_bufs();
 
-    rsh_inbuf->size = 0;
-    rsh_outbuf->size = 0;
+    #ifdef _IOFBF
+        setvbuf(stdout, rsh_outbuf->buf, _IOFBF, rsh_outbuf->max);
+        setvbuf(stderr, rsh_errbuf->buf, _IOFBF, rsh_errbuf->max);
+    #else
+        setbuf(stdout, rsh_outbuf->buf, rsh_outbuf->max);
+        setbuf(stderr, rsh_errbuf->err, rsh_errbuf->max);
+    #endif 
 
     return EXIT_SUCCESS;
 }
 
 void free_io_bufs() {
-    free(rsh_inbuf->buf);
-    free(rsh_outbuf->buf);
-    free(rsh_inbuf);
-    free(rsh_outbuf);
+    free_rsh_buf(rsh_inbuf);
+    free_rsh_buf(rsh_outbuf);
+    free_rsh_buf(rsh_errbuf);
 }
 
-uint8_t flush_io_bufs() {
-    memset(rsh_inbuf->buf, 0, rsh_inbuf->max);
-    memset(rsh_outbuf->buf, 0, rsh_outbuf->max);
+void reset_io_bufs() {
+    free_io_bufs();
+    init_io_bufs();
+}
 
-    rsh_inbuf->size = 0;
-    rsh_outbuf->size = 0;
-
-    if (rsh_inbuf->max >= INPUT_BUFSIZE * 4) {
-        rsh_inbuf->buf = realloc(rsh_inbuf->buf, INPUT_BUFSIZE * sizeof(char));
-        if (!rsh_inbuf->buf) {
-            rsh_inbuf = alloc_rsh_buf(INPUT_BUFSIZE);
-            if (!rsh_inbuf)
-                return EXIT_UNRECOVERABLE;
-            return EXIT_RECOVERABLE;
-        }
-        rsh_inbuf->max = INPUT_BUFSIZE;
-    }
-
-    if (rsh_outbuf->max >= OUTPUT_BUFSIZE * 2) {
-        rsh_outbuf->buf = realloc(rsh_outbuf->buf, OUTPUT_BUFSIZE * sizeof(char));
-        if (!rsh_outbuf->buf) {
-            rsh_outbuf = alloc_rsh_buf(OUTPUT_BUFSIZE);
-            if (!rsh_outbuf)
-                return EXIT_UNRECOVERABLE;
-            return EXIT_RECOVERABLE;
-        }
-        rsh_outbuf->max = OUTPUT_BUFSIZE;
-    }
-
-    return EXIT_SUCCESS;
+void flush_io_bufs() {
+    flush_rsh_buf(rsh_inbuf);
+    flush_rsh_buf(rsh_outbuf);
+    flush_rsh_buf(rsh_errbuf);
 }
 
 rsh_buf_t* alloc_rsh_buf(size_t bufsize) {
@@ -95,8 +100,11 @@ rsh_buf_t* alloc_rsh_buf(size_t bufsize) {
 }
 
 void free_rsh_buf(rsh_buf_t *buffer) {
-    free(buffer->buf);
-    memset(buffer, 0, sizeof(*buffer));
+    if (buffer) {
+        if (buffer->buf)
+            free(buffer->buf);    
+        free(buffer);
+    }
 }
 
 void flush_rsh_buf(rsh_buf_t *buffer) {
